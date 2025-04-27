@@ -34,7 +34,14 @@ class MCPClient:
             args=[server_script_path],
             env=None
         )
-        
+
+        # exit_stack.enter_async_context(context_manager): 动态进入指定的异步上下文管理器，并将其添加到退出栈中。
+        #   AsyncExitStack 记录它们，以便在退出时调用相应的清理操作。
+        # 通过 @asynccontextmanager 和 AsyncExitStack 的协作，开发者可以以一种优雅和简洁的方式管理异步资源，确保在程序执行过程中资源正确地获取和释放。enter_async_context 进一步简化了资源管理逻辑，使得代码更加直观。
+
+        # enter_async_context(stdio_client(server_params)) 会调用 stdio_client 函数并进入其上下文管理机制：
+        #   进入上下文：调用 stdio_client 的 async 生成器函数并执行 yield 之前的代码，获取资源或初始化。
+        #   退出上下文：当 AsyncExitStack 自身退出（例如由于异常或正常完成任务）时，它会自动调用 stdio_client 的退出逻辑（在 yield 之后的代码）。
         stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
         self.stdio, self.write = stdio_transport
         self.session = await self.exit_stack.enter_async_context(ClientSession(self.stdio, self.write))
