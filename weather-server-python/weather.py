@@ -34,6 +34,14 @@ Description: {props.get('description', 'No description available')}
 Instructions: {props.get('instruction', 'No specific instructions provided')}
 """
 
+# 装饰器执行时机
+#   装饰器的定义:
+#       当 Python 文件被导入或执行时，装饰器 @mcp.tool() 会立即执行。执行时，它将 get_alerts 函数作为参数传递给 mcp.tool() 函数。
+#   装饰器的效果:
+#       mcp.tool() 接受 get_alerts 函数，并返回一个新的函数或对 get_alerts 进行修改。具体的行为依赖于 mcp.tool() 的实现。
+#       get_alerts 函数在文件被解析时被装饰，但装饰器内部的逻辑（比如注册函数、修改函数行为等）会在此时完成。
+#   函数调用时:
+#       get_alerts 函数的实际执行时机是当你在代码中调用 get_alerts(state) 时。此时，任何由装饰器添加的功能（比如日志记录、性能监控等）也会在函数执行过程中生效。
 @mcp.tool()
 async def get_alerts(state: str) -> str:
     """Get weather alerts for a US state.
